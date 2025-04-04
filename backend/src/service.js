@@ -79,3 +79,123 @@ const generateId = (currentList, max = 999999999) => {
   }
   return R.toString();
 }
+
+/***************************************************************
+                       Auth Functions
+***************************************************************/
+
+export const getEmailFromAuthorization = (authorization) => {
+  try {
+    const token = authorization.replace('Bearer ', '');
+    const { email } = jwt.verify(token, JWT_SECRET);
+    if (!(email in users)) {
+      throw new AccessError('Invalid Token');
+    }
+    return email;
+  } catch {
+    throw new AccessError('Invalid Token');
+  }
+};
+
+export const login = (email, password) => 
+  resourceLock((resolve, reject) => {
+    if (!email) {
+      return reject(new InputError('Must provide an email for user login'));
+    } else if (!password) {
+      return reject(new InputError('Must provide a password for user login'));
+    } else if (email && email in users) {
+      if (users[email].password === password) {
+        users[email].sessionActive = true;
+        resolve(jwt.sign({ email }, JWT_SECRET, { algorithm: 'HS256' }));
+      }
+    }
+    return reject(new InputError('Invalid email or password')); 
+  });
+
+export const logout = (email) => 
+  resourceLock((resolve, reject) => {
+    users[email].sessionActive = false;
+    resolve();
+  });
+
+export const register = (email, password, name) => 
+  resourceLock((resolve, reject) => {
+    if (!email) {
+      return reject(new InputError('Must provide an email for user registration'));
+    } else if (!password) {
+      return reject(new InputError('Must provide a password for user registration'));
+    } else if (!name) {
+      return reject(new InputError('Must provide a name for user registration'));
+    } else if (email && email in users) {
+      return reject(new InputError('Email address already registered'));
+    } else {
+      users[email] = {
+        name,
+        password,
+        sessionActive: true,
+      };
+      const token = jwt.sign({ email }, JWT_SECRET, { algorithm: 'HS256'});
+      resolve(token);
+    }
+  });
+
+/***************************************************************
+                       Listing Functions
+***************************************************************/
+
+const newListingPayload = (title, owner, address, price, thumbnail, metadata) => ({
+  title,
+  owner,
+  address,
+  price,
+  thumbnail,
+  metadata,
+  reviews: [],
+  availability: [],
+  published: false,
+  postedOn: null,
+});
+
+export const asserOwnsListing = (email, listingId) =>
+  resourceLock((resolve, reject) => {
+    if(!(listingId in listings)) {
+      return reject(new InputError('Invalid booking ID'));
+    } else if (listings[listingId].owner !== email) {
+      return reject(new InputError('User does not own this Listing'));
+    } else {
+      resolve();
+    }
+  });
+
+export const assertOwnsBooking = (email, bookingId) =>
+  resourceLock((resolve, reject) => {
+    if (!(bookingId in bookings)) {
+      return reject(new InputError('Invalid booking ID'));
+    } else if (bookings[bookingId].owner !== email) {
+      return reject(new InputError('User does not own this booking'));
+    } else {
+      resolve();
+    }
+  });
+
+export const addListing = (title, email, address, price, thumbnail, metadata) => 
+  resourceLock((resolve, reject) => {
+    if (title === undefined) {
+      return reject(new InputError('Must provide a title for new listing'));
+    } else if (Object.keys(listings).find((key) => listings[key].title === title) !== undefined) {
+      return reject(new InputError('A listing with this title already exists'));
+    } else if (address === undefined) {
+      return reject(new InputError('Must provide an address for new listing'));
+    } else if (price === undefined || isNaN(price)) {
+      return reject(new InputError('Must provide a valid price for new listing'));
+    } else if (thumbnail === undefined) {
+      return reject(new InputError('Must provide a thumbnail for new listing'));
+    } else if (metadata === undefined) {
+      return reject(new InputError('Must provide property details for this listing'));
+    } else {
+      const id = newListingId();
+      listings[id] = newListingPayload(title, email, address, price, thumbnail, metadata);
+
+      resolve(id);
+    }
+  });
