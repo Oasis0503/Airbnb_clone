@@ -1,7 +1,7 @@
 import fs from 'fs';
-import jwt from 'jasonwebtoken';
+import jwt from 'jsonwebtoken';
 import AsyncLock from 'async-lock';
-import {InputError, AccessError} from './error';
+import { InputError, AccessError } from './error';
 
 const lock = new AsyncLock();
 
@@ -16,7 +16,7 @@ let users = {};
 let listings = {};
 let bookings = {};
 
-const update = (users, listings, bookings) => 
+const update = (users, listings, bookings) =>
   new Promise((resolve, reject) => {
     lock.acquire('saveData', () => {
       try {
@@ -53,7 +53,7 @@ try {
   listings = data.listings;
   bookings = data.bookings;
 } catch {
-  console.log('WARNING: No database found, crate a new one');
+  console.log('WARNING: No database found, create a new one');
   save();
 }
 
@@ -64,7 +64,7 @@ try {
 const newListingId = (_) => generateId(Object.keys(listings));
 const newBookingId = (_) => generateId(Object.keys(bookings));
 
-export const resourceLock = (callback) => 
+export const resourceLock = (callback) =>
   new Promise((resolve, reject) => {
     lock.acquire('resourceLock', callback(resolve, reject));
   });
@@ -76,7 +76,7 @@ const generateId = (currentList, max = 999999999) => {
     R = randNum(max);
   }
   return R.toString();
-}
+};
 
 /***************************************************************
                        Auth Functions
@@ -95,7 +95,7 @@ export const getEmailFromAuthorization = (authorization) => {
   }
 };
 
-export const login = (email, password) => 
+export const login = (email, password) =>
   resourceLock((resolve, reject) => {
     if (!email) {
       return reject(new InputError('Must provide an email for user login'));
@@ -107,16 +107,16 @@ export const login = (email, password) =>
         resolve(jwt.sign({ email }, JWT_SECRET, { algorithm: 'HS256' }));
       }
     }
-    return reject(new InputError('Invalid email or password')); 
+    return reject(new InputError('Invalid email or password'));
   });
 
-export const logout = (email) => 
+export const logout = (email) =>
   resourceLock((resolve, reject) => {
     users[email].sessionActive = false;
     resolve();
   });
 
-export const register = (email, password, name) => 
+export const register = (email, password, name) =>
   resourceLock((resolve, reject) => {
     if (!email) {
       return reject(new InputError('Must provide an email for user registration'));
@@ -132,7 +132,7 @@ export const register = (email, password, name) =>
         password,
         sessionActive: true,
       };
-      const token = jwt.sign({ email }, JWT_SECRET, { algorithm: 'HS256'});
+      const token = jwt.sign({ email }, JWT_SECRET, { algorithm: 'HS256' });
       resolve(token);
     }
   });
@@ -154,10 +154,10 @@ const newListingPayload = (title, owner, address, price, thumbnail, metadata) =>
   postedOn: null,
 });
 
-export const asserOwnsListing = (email, listingId) =>
+export const assertOwnsListing = (email, listingId) =>
   resourceLock((resolve, reject) => {
-    if(!(listingId in listings)) {
-      return reject(new InputError('Invalid booking ID'));
+    if (!(listingId in listings)) {
+      return reject(new InputError('Invalid listing ID'));
     } else if (listings[listingId].owner !== email) {
       return reject(new InputError('User does not own this Listing'));
     } else {
@@ -176,7 +176,7 @@ export const assertOwnsBooking = (email, bookingId) =>
     }
   });
 
-export const addListing = (title, email, address, price, thumbnail, metadata) => 
+export const addListing = (title, email, address, price, thumbnail, metadata) =>
   resourceLock((resolve, reject) => {
     if (title === undefined) {
       return reject(new InputError('Must provide a title for new listing'));
@@ -262,7 +262,7 @@ export const publishListing = (listingId, availability) =>
 
 export const unpublishListing = (listingId) =>
   resourceLock((resolve, reject) => {
-    if (listings[lisitngId].published === false) {
+    if (listings[listingId].published === false) {
       return reject(new InputError('This listing is already unpublished'));
     } else {
       listings[listingId].availability = [];
