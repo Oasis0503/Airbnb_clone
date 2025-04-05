@@ -100,3 +100,104 @@ app.post(
     }),
   ),
 );
+
+/***************************************************************
+                       Listing Functions
+***************************************************************/
+
+// 获取所有房源
+app.get(
+  '/listings',
+  catchErrors(async (req, res) => {
+    return res.json({ listings: await getAllListings() });
+  }),
+);
+
+// 获取特定房源详情
+app.get(
+  '/listings/:listingid',
+  catchErrors(async (req, res) => {
+    const { listingid } = req.params;
+    return res.status(200).json({ listing: await getListingDetails(listingid) });
+  }),
+);
+
+// 创建新房源
+app.post(
+  '/listings/new',
+  catchErrors(
+    authed(async (req, res, email) => {
+      const { title, address, price, thumbnail, metadata } = req.body;
+      return res.status(200).json({
+        listingId: await addListing(title, email, address, price, thumbnail, metadata),
+      });
+    }),
+  ),
+);
+
+// 更新房源信息
+app.put(
+  '/listings/:listingid',
+  catchErrors(
+    authed(async (req, res, email) => {
+      const { listingid } = req.params;
+      const { title, address, thumbnail, price, metadata } = req.body;
+      await assertOwnsListing(email, listingid);
+      await updateListing(listingid, title, address, thumbnail, price, metadata);
+      return res.status(200).send({});
+    }),
+  ),
+);
+
+// 删除房源
+app.delete(
+  '/listings/:listingid',
+  catchErrors(
+    authed(async (req, res, email) => {
+      const { listingid } = req.params;
+      await assertOwnsListing(email, listingid);
+      await removeListing(listingid);
+      return res.status(200).send({});
+    }),
+  ),
+);
+
+// 发布房源
+app.put(
+  '/listings/publish/:listingid',
+  catchErrors(
+    authed(async (req, res, email) => {
+      const { listingid } = req.params;
+      const { availability } = req.body;
+      await assertOwnsListing(email, listingid);
+      await publishListing(listingid, availability);
+      return res.status(200).send({});
+    }),
+  ),
+);
+
+// 取消发布房源
+app.put(
+  '/listings/unpublish/:listingid',
+  catchErrors(
+    authed(async (req, res, email) => {
+      const { listingid } = req.params;
+      await assertOwnsListing(email, listingid);
+      await unpublishListing(listingid);
+      return res.status(200).send({});
+    }),
+  ),
+);
+
+// 留下评论
+app.put(
+  '/listings/:listingid/review/:bookingid',
+  catchErrors(
+    authed(async (req, res, email) => {
+      const { listingid, bookingid } = req.params;
+      const { review } = req.body;
+      await leaveListingReview(email, listingid, bookingid, review);
+      return res.status(200).send({});
+    }),
+  ),
+);
