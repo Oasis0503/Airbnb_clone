@@ -2,8 +2,6 @@ import fs from 'fs';
 import jwt from 'jasonwebtoken';
 import AsyncLock from 'async-lock';
 import {InputError, AccessError} from './error';
-import { resolve } from 'path';
-import { rejects } from 'assert';
 
 const lock = new AsyncLock();
 
@@ -292,3 +290,92 @@ export const leaveListingReview = (email, listingId, bookingId, review) =>
     }
   });
 
+/***************************************************************
+                       Booking Functions
+***************************************************************/
+
+const newBookingPayload = (owner, dateRange, totalPrice, listingId) => ({
+  owner,
+  dateRange,
+  totalPrice,
+  listingId,
+  status: 'pending',
+});
+
+export const makeNewBooking = (owner, dateRange, totalPrice, listingId) =>
+  resourceLock((resolve, reject) => {
+    if (!(listingId in listings)) {
+      return reject(new InputError('Invalid listing ID'));
+    } else if (dateRange === undefined) {
+      return reject(new InputError('Must provide a valid date range for the booking'));
+    } else if (totalPrice === undefined || totalPrice < 0 || isNaN(totalPrice)) {
+      return reject(new InputError('Must provide a valid total price for this booking'));
+    } else if (listings[listingId].owner === owner) {
+      return reject(new InputError('Cannot make bookings for your own listings'));
+    } else if (listings[listingId].published === false) {
+      return reject(new InputError('Cannot make a booking for an unpublished listing'));
+    } else {
+      const id = newBookingId();
+      bookings[id] = newBookingPayload(owner, dateRange, totalPrice, listingId);
+
+      resolve(id);
+    }
+  });
+
+export const getAllBookings = () =>
+  resourceLock((resolve, reject) => {
+    resolve(
+      Object.keys(bookings).map((key) => ({
+        id: parseInt(key, 10),
+        owner: bookings[key].owner,
+        dateRange: bookings[key].dateRange,
+        totalPrice: bookings[key].totalPrice,
+        listingId: bookings[key].listingId,
+        status: bookings[key].status,
+      })),
+    );
+  });
+
+export const removeBooking = (bookingId) =>
+  resourceLock((resolve, reject) => {
+    delete bookings[bookingId];
+    resolve();
+  });
+
+export const acceptBooking = (owner, bookingId) =>
+  resourceLock((resolve, reject) => {
+    if (!(bookingId in bookings)) {
+      return reject(new InputError('Invalid booking ID'));
+    } else if (
+      Object.keys(listings).find((key) => key === bookings[bookingId].listingId && listings[key].owner === owner) ===
+      undefined
+    ) {
+      return reject(new InputError("Cannot accept bookings for a listing that isn't yours"));
+    } else if (bookings[bookingId].status === 'accepted') {
+      return reject(new InputError('Booking has already been accepted'));
+    } else if (bookings[bookingId].status === 'declined') {
+      return reject(new InputError('Booking has already been declined'));
+    } else {
+      bookings[bookingId].status = 'accepted';
+      resolve();
+    }
+  });
+
+export const declineBooking = (owner, bookingId) =>
+  resourceLock((resolve, reject) => {
+    if (!(bookingId in bookings)) {
+      return reject(new InputError('Invalid booking ID'));
+    } else if (
+      Object.keys(listings).find((key) => key === bookings[bookingId].listingId && listings[key].owner === owner) ===
+      undefined
+    ) {
+      return reject(new InputError("Cannot accept bookings for a listing that isn't yours"));
+    } else if (bookings[bookingId].status === 'declined') {
+      return reject(new InputError('Booking has already been declined'));
+    } else if (bookings[bookingId].status === 'accepted') {
+      return reject(new InputError('Booking has already been accepted'));
+    } else {
+      bookings[bookingId].status = 'declined';
+      resolve();
+    }
+  });
