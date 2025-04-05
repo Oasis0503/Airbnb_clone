@@ -199,3 +199,96 @@ export const addListing = (title, email, address, price, thumbnail, metadata) =>
       resolve(id);
     }
   });
+
+export const getListingDetails = (listingId) =>
+  resourceLock((resolve, reject) => {
+    resolve({
+      ...listings[listingId],
+    });
+  });
+
+export const getAllListings = () =>
+  resourceLock((resolve, reject) => {
+    resolve(
+      Object.keys(listings).map((key) => ({
+        id: parseInt(key, 10),
+        title: listings[key].title,
+        owner: listings[key].owner,
+        address: listings[key].address,
+        thumbnail: listings[key].thumbnail,
+        price: listings[key].price,
+        reviews: listings[key].reviews,
+      })),
+    );
+  });
+
+export const updateListing = (listingId, title, address, thumbnail, price, metadata) =>
+  resourceLock((resolve, reject) => {
+    if (address) {
+      listings[listingId].address = address;
+    }
+    if (title) {
+      listings[listingId].title = title;
+    }
+    if (thumbnail) {
+      listings[listingId].thumbnail = thumbnail;
+    }
+    if (price) {
+      listings[listingId].price = price;
+    }
+    if (metadata) {
+      listings[listingId].metadata = metadata;
+    }
+    resolve();
+  });
+
+export const removeListing = (listingId) =>
+  resourceLock((resolve, reject) => {
+    delete listings[listingId];
+    resolve();
+  });
+
+export const publishListing = (listingId, availability) =>
+  resourceLock((resolve, reject) => {
+    if (availability === undefined) {
+      return reject(new InputError('Must provide listing availability'));
+    } else if (listings[listingId].published === true) {
+      return reject(new InputError('This listing is already published'));
+    } else {
+      listings[listingId].availability = availability;
+      listings[listingId].published = true;
+      listings[listingId].postedOn = new Date().toISOString();
+      resolve();
+    }
+  });
+
+export const unpublishListing = (listingId) =>
+  resourceLock((resolve, reject) => {
+    if (listings[lisitngId].published === false) {
+      return reject(new InputError('This listing is already unpublished'));
+    } else {
+      listings[listingId].availability = [];
+      listings[listingId].published = false;
+      listings[listingId].postedOn = null;
+      resolve();
+    }
+  });
+
+export const leaveListingReview = (email, listingId, bookingId, review) =>
+  resourceLock((resolve, reject) => {
+    if (!(bookingId in bookings)) {
+      return reject(new InputError('Invalid booking ID'));
+    } else if (!(listingId in listings)) {
+      return reject(new InputError('Invalid listing ID'));
+    } else if (bookings[bookingId].owner !== email) {
+      return reject(new InputError('User has not stayed at this listing'));
+    } else if (bookings[bookingId].listingId !== listingId) {
+      return reject(new InputError('This booking is not associated with this listing ID'));
+    } else if (review === undefined) {
+      return reject(new InputError('Must provide review contents'));
+    } else {
+      listings[listingId].reviews.push(review);
+      resolve();
+    }
+  });
+
