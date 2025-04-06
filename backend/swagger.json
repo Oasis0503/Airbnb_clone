@@ -19,15 +19,9 @@
       "description": "Managing bookings"
     }
   ],
-  "schemes": [
-    "http"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
   "components": {
     "securitySchemes": {
       "bearerAuth": {
@@ -501,9 +495,7 @@
     "/user/auth/register": {
       "post": {
         "summary": "Send registration request for a new user to join AirBrB",
-        "tags": [
-          "User Auth"
-        ],
+        "tags": ["User Auth"],
         "parameters": [
           {
             "$ref": "#/components/parameters/AuthRegisterBody"
@@ -522,9 +514,7 @@
     "/user/auth/login": {
       "post": {
         "summary": "Given correct user credentials, return an authorised access token to make subsequent user calls",
-        "tags": [
-          "User Auth"
-        ],
+        "tags": ["User Auth"],
         "parameters": [
           {
             "$ref": "#/components/parameters/AuthLoginBody"
@@ -548,9 +538,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "User Auth"
-        ],
+        "tags": ["User Auth"],
         "parameters": [
           {
             "$ref": "#/components/parameters/Authorization"
@@ -569,9 +557,7 @@
     "/listings": {
       "get": {
         "summary": "Get a list of the meta-data for all AirBrB listings",
-        "tags": [
-          "Listing Management"
-        ],
+        "tags": ["Listing Management"],
         "responses": {
           "200": {
             "$ref": "#/components/responses/200/ListingsGetAll"
@@ -590,9 +576,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Listing Management"
-        ],
+        "tags": ["Listing Management"],
         "parameters": [
           {
             "$ref": "#/components/parameters/Authorization"
@@ -617,9 +601,7 @@
     "/listings/{listingid}": {
       "get": {
         "summary": "Collect all of the data pertaining to a particular AirBrB listing",
-        "tags": [
-          "Listing Management"
-        ],
+        "tags": ["Listing Management"],
         "parameters": [
           {
             "$ref": "#/components/parameters/ListingsIdQuery"
@@ -641,9 +623,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Listing Management"
-        ],
+        "tags": ["Listing Management"],
         "parameters": [
           {
             "$ref": "#/components/parameters/Authorization"
@@ -674,9 +654,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Listing Management"
-        ],
+        "tags": ["Listing Management"],
         "parameters": [
           {
             "$ref": "#/components/parameters/Authorization"
@@ -706,9 +684,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Listing Management"
-        ],
+        "tags": ["Listing Management"],
         "parameters": [
           {
             "$ref": "#/components/parameters/Authorization"
@@ -741,9 +717,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Listing Management"
-        ],
+        "tags": ["Listing Management"],
         "parameters": [
           {
             "$ref": "#/components/parameters/Authorization"
@@ -773,9 +747,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Listing Management"
-        ],
+        "tags": ["Listing Management"],
         "parameters": [
           {
             "$ref": "#/components/parameters/Authorization"
@@ -811,9 +783,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Booking Management"
-        ],
+        "tags": ["Booking Management"],
         "parameters": [
           {
             "$ref": "#/components/parameters/Authorization"
@@ -837,9 +807,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Booking Management"
-        ],
+        "tags": ["Booking Management"],
         "parameters": [
           {
             "$ref": "#/components/parameters/Authorization"
@@ -872,9 +840,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Booking Management"
-        ],
+        "tags": ["Booking Management"],
         "parameters": [
           {
             "$ref": "#/components/parameters/Authorization"
@@ -904,9 +870,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Booking Management"
-        ],
+        "tags": ["Booking Management"],
         "parameters": [
           {
             "$ref": "#/components/parameters/Authorization"
@@ -936,9 +900,7 @@
             "bearerAuth": []
           }
         ],
-        "tags": [
-          "Booking Management"
-        ],
+        "tags": ["Booking Management"],
         "parameters": [
           {
             "$ref": "#/components/parameters/Authorization"

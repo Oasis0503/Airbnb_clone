@@ -7,7 +7,8 @@
     "test": "jest test/*",
     "lint": "eslint src/*.js",
     "start": "nodemon -r esm src/server.js --ignore database.json",
-    "reset": "npx rimraf database.json"
+    "reset": "npx rimraf database.json",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
   },
   "author": "",
   "license": "ISC",
@@ -24,6 +25,7 @@
     "moment": "^2.29.4",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.6",
+    "prettier": "^3.5.3",
     "supertest": "^6.0.0",
     "swagger-ui-express": "^4.1.4"
   },

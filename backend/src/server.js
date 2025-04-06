@@ -1,6 +1,6 @@
 import fs from 'fs';
 import express from 'express';
-import swaggerUi from  'swagger-ui-express';
+import swaggerUi from 'swagger-ui-express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import morgan from 'morgan';
