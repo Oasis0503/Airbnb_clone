@@ -201,3 +201,65 @@ app.put(
     }),
   ),
 );
+
+/***************************************************************
+                       Booking Functions
+***************************************************************/
+
+app.get(
+  '/bookings',
+  catchErrors(
+    authed(async (req, res, email) => {
+      return res.status(200).json({
+        bookings: await getAllBookings(),
+      });
+    }),
+  ),
+);
+
+app.delete(
+  '/bookings/:bookingid',
+  catchErrors(
+    authed(async (req, res, email) => {
+      const { bookingid } = req.params;
+      await assertOwnsBooking(email, bookingid);
+      await removeBooking(bookingid);
+      return res.status(200).send({});
+    }),
+  ),
+);
+
+app.post(
+  '/bookings/new/:listingid',
+  catchErrors(
+    authed(async (req, res, email) => {
+      const { listingid } = req.params;
+      const { dateRange, totalPrice } = req.body;
+      return res.status(200).json({
+        bookingId: await makeNewBooking(email, dateRange, totalPrice, listingid),
+      });
+    }),
+  ),
+);
+
+app.put(
+  '/bookings/accept/:bookingid',
+  catchErrors(
+    authed(async (req, res, email) => {
+      const { bookingid } = req.params;
+      await acceptBooking(email, bookingid);
+      return res.status(200).json({});
+    }),
+  ),
+);
+
+app.put(
+  '/bookings/decline/:bookingid',
+  catchErrors(
+    authed(async (req, res, email) => {
+      const { bookingid } = req.params;
+      await declineBooking(email, bookingid);
+      return res.status(200).json({});
+    }),
+  ),
+);
