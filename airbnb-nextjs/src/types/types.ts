@@ -1,3 +1,4 @@
+// Record the types or some stable data
 export type SnackbarStatus = 'success' | 'error' | 'warning' | 'info';
 
 export const propertyType: string[] = [
