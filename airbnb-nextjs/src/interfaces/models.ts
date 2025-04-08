@@ -2,6 +2,12 @@ import { Moment } from 'moment';
 
 // 纯数据接口，不包含修改数据的方法
 
+// 页面窗口大小
+export interface WindowSizeTypes {
+  width: number;
+  height: number;
+}
+
 // 登录注册框错误模型
 export interface loginRegisterTextFieldErrorTypes {
   error: boolean;
