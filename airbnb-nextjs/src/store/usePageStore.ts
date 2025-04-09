@@ -1,5 +1,5 @@
-import { PageState } from './../interfaces/State';
 import { create } from 'zustand';
+import { PageState } from '@/interfaces/State';
 
 export const usePageStore = create<PageState>((set) => ({
   page: 0,

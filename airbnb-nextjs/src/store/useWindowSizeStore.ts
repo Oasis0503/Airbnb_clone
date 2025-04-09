@@ -1,6 +1,6 @@
-import { WindowSizeTypes } from './../interfaces/models';
 import { create } from 'zustand';
 import { useEffect } from 'react';
+import { WindowSizeTypes } from '@/interfaces/models';
 
 export const useWindowSizeStore = create<WindowSizeTypes>(() => ({
   width: 0,
