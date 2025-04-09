@@ -69,3 +69,9 @@ export interface FilterDateState {
   time: string[] | null;
   setTime: (time: string[] | null) => void;
 }
+
+// 对话日期相关状态
+export interface DialogDateContext {
+  id: number | null;
+  selectDate: (id: number) => void;
+}
