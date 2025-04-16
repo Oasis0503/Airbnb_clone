@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { CustomerSnackbarState } from '@/interfaces/State'; 
+import { CustomerSnackbarState } from '@/interfaces'; 
 
 export const useSnackbarStore = create<CustomerSnackbarState>((set) => ({
   message: '',

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { NormalOrderState } from '@/interfaces/State'
+import { NormalOrderState } from '@/interfaces'
 
 export const useNormalOrderStore = create<NormalOrderState>((set) => ({
   normal: {},

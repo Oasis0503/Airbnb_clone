@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { DialogDateContext } from '@/interfaces/State'
+import { DialogDateContext } from '@/interfaces'
 
 export const useDialogDateStore = create<DialogDateContext>((set) => ({
   id: null,

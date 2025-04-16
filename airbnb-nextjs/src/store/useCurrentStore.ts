@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { CurrentListingState } from '@/interfaces/State';
+import { CurrentListingState } from '@/interfaces';
 
 export const useCurrentStore = create<CurrentListingState>((set) => ({
   current: [],

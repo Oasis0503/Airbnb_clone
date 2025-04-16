@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { PublishedState } from '@/interfaces/State';
+import { PublishedState } from '@/interfaces';
 
 export const usePublishedStore = create<PublishedState>((set) => ({
   published: [],

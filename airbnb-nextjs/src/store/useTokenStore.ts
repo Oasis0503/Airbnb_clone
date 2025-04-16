@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { TokenState } from '@/interfaces/State'
+import { TokenState } from '@/interfaces'
 
 export const useTokenStore = create<TokenState>((set) => ({
   token: null,

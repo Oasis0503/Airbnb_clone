@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AlertErrorState } from '@/interfaces/State'; 
+import { AlertErrorState } from '@/interfaces'; 
 
 export const useAlertErrorStore = create<AlertErrorState>((set) => ({
   title: '',
