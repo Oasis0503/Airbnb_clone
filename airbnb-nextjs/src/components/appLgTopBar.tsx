@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import { Box, AppBar, Avatar, Popover } from '@mui/material';
 import { useSnackbarStore, useTokenStore, useAlertErrorStore, useWindowSizeStore, usePageStore } from '@/store';
@@ -8,10 +8,11 @@ import { useRouter } from 'next/navigation';
 import { ManageSearch, Logout, Menu, Person } from '@mui/icons-material';
 import { Logo, PopoverList } from '@/styles/appBarStyle';
 import { newRequests } from '../../helper';
-import SearchFilterBar from './searchFilterBar';
 import { ChildrenTypes } from '@/interfaces';
+import SearchFilterBar from '@/components/SearchFilterBar';
 
 const AppLgTopBar: React.FC<ChildrenTypes> = ({ children }) => {
+  const [isClient, setIsClient] = useState(false);
   const { token, email, setToken, setEmail } = useTokenStore();
   const { page } = usePageStore();
   const { showSnackbar } = useSnackbarStore();
@@ -20,6 +21,10 @@ const AppLgTopBar: React.FC<ChildrenTypes> = ({ children }) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
   const router = useRouter();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // define function for click button or icon
   const handleClick = (event: React.MouseEvent<HTMLElement>) : void => setAnchorEl(event.currentTarget);
@@ -40,6 +45,10 @@ const AppLgTopBar: React.FC<ChildrenTypes> = ({ children }) => {
       }).catch((error) : void => {
         showAlertError('Logout Error', error.error);
       })
+  }
+
+  if (!isClient) {
+    return <div>Loading...</div>;
   }
 
   return (
