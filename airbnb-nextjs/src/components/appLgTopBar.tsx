@@ -62,7 +62,7 @@ const AppLgTopBar: React.FC<ChildrenTypes> = ({ children }) => {
           {/* Logo is the Airbnb logo, it will direct to landing page when click */}
           <Box sx={{ flex: 1, display: 'flex', alignItems: 'center' }}>
             <Logo
-              src={ page === 0 && width <= 1440 ? '/resources/logo2.svg' : '/resources/logo.svg' }
+              src={ page === 0 && width <= 1440 ? 'logo2.svg' : 'logo.svg' }
               alt="Airbnb Logo"
               onClick={navigateLand}
               sx={{ height: width > 1440 ? 50 : 40, mr: 3 } }

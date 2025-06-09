@@ -1,5 +1,5 @@
 import { SnackbarStatus } from "@/types";
-import { ListingBoxTypes, ListingFilterTypes } from "./models";
+import { ListingBoxTypes, ListingFilterTypes } from "@/interfaces";
 
 // 包含状态及其修改方法
 
